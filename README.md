@@ -1,80 +1,110 @@
-# [GitHub Desktop](https://desktop.github.com)
+<p align="right">
+  <a href="https://npmjs.org/package/deck.gl">
+    <img src="https://img.shields.io/npm/v/deck.gl.svg?style=flat-square" alt="version" />
+  </a>
+  <a href="https://travis-ci.org/uber/deck.gl">
+    <img src="https://img.shields.io/travis/uber/deck.gl/master.svg?style=flat-square" alt="build" />
+  </a>
+  <a href="https://npmjs.org/package/deck.gl">
+    <img src="https://img.shields.io/npm/dm/deck.gl.svg?style=flat-square" alt="downloads" />
+  </a>
+  <a href="http://starveller.sigsev.io/uber/deck.gl">
+    <img src="http://starveller.sigsev.io/api/repos/uber/deck.gl/badge" alt="stars" />
+  </a>
+  <a href='https://coveralls.io/github/uber/deck.gl?branch=master'>
+    <img src='https://img.shields.io/coveralls/uber/deck.gl.svg?style=flat-square' alt='Coverage Status' />
+  </a>
+</p>
 
-[![Travis](https://img.shields.io/travis/desktop/desktop.svg?style=flat-square&label=Travis+CI)](https://travis-ci.org/desktop/desktop)
-[![CircleCI](https://img.shields.io/circleci/project/github/desktop/desktop.svg?style=flat-square&label=CircleCI)](https://circleci.com/gh/desktop/desktop)
-[![AppVeyor Build Status](https://img.shields.io/appveyor/ci/github-windows/desktop/master.svg?style=flat-square&label=AppVeyor&logo=appveyor)](https://ci.appveyor.com/project/github-windows/desktop/branch/master)
-[![license](https://img.shields.io/github/license/desktop/desktop.svg?style=flat-square)](https://github.com/desktop/desktop/blob/master/LICENSE)
-![90+% TypeScript](https://img.shields.io/github/languages/top/desktop/desktop.svg?style=flat-square&colorB=green)
+<h1 align="center">deck.gl | <a href="https://uber.github.io/deck.gl">Docs</a></h1>
 
-GitHub Desktop is an open source [Electron](https://electron.atom.io)-based
-GitHub app. It is written in [TypeScript](http://www.typescriptlang.org) and
-uses [React](https://facebook.github.io/react/).
+<h5 align="center">A WebGL overlay suite for React providing a set of highly performant data visualization overlays</h5>
 
-![GitHub Desktop screenshot - Windows](https://cloud.githubusercontent.com/assets/359239/26094502/a1f56d02-3a5d-11e7-8799-23c7ba5e5106.png)
+[![docs](http://i.imgur.com/mvfvgf0.jpg)](https://uber.github.io/deck.gl)
 
-## Where can I get it?
+Provides tested, highly performant layers for data visualization,
+such as scatterplots, arcs, geometries defined in GeoJSON, etc...
 
-Download the official installer for your operating system:
+    npm install --save deck.gl
 
- - [macOS](https://central.github.com/deployments/desktop/desktop/latest/darwin)
- - [Windows](https://central.github.com/deployments/desktop/desktop/latest/win32)
- - [Windows machine-wide install](https://central.github.com/deployments/desktop/desktop/latest/win32?format=msi)
+## Using deck.gl
 
-There are several community-supported package managers that can be used to install Github Desktop.
- - Windows users can install using [Chocolatey](https://chocolatey.org/) package manager:
-      `c:\> choco install github-desktop`
- - macOS users can install using [Homebrew](https://brew.sh/) package manager:
-      `$ brew cask install github`
- - Arch Linux users can install the latest version from the [AUR](https://aur.archlinux.org/packages/github-desktop/).
+To learn how to use deck.gl through examples coming with the deck.gl repo,
+please clone the latest **release** branch.
 
-You can install this alongside your existing GitHub Desktop for Mac or GitHub
-Desktop for Windows application.
+`git clone -b 4.1-release --single-branch https://github.com/uber/deck.gl.git`
 
-**NOTE**: there is no current migration path to import your existing
-repositories into the new application - you can drag-and-drop your repositories
-from disk onto the application to get started.
+A very simple usage of deck.gl is showcased in the [hello-world examples](./examples),
+using both [webpack2](./examples/hello-world-webpack2) and
+[browserify](./examples/hello-world-browserify),
+so you can choose which setup you prefer or are more familiar with.
 
-### Beta Channel
+```javascript
+import DeckGL from 'deck.gl';
+import {ArcLayer} from 'deck.gl';
 
-Want to test out new features and get fixes before everyone else? Install the
-beta channel to get access to early builds of Desktop:
+const flights = new ArcLayer({
+  id: 'flights',
+  data: [] // Some flight points
+});
 
- - [macOS](https://central.github.com/deployments/desktop/desktop/latest/darwin?env=beta)
- - [Windows](https://central.github.com/deployments/desktop/desktop/latest/win32?env=beta)
+<DeckGL width={1920} height={1080} layers={[flights]} />
+```
 
-## I have a problem with GitHub Desktop
+You can also take a look at the [docs website](https://uber.github.io/deck.gl)
+or browse directly the [docs folder](./docs).
 
-First, please search the [open issues](https://github.com/desktop/desktop/issues?q=is%3Aopen)
-and [closed issues](https://github.com/desktop/desktop/issues?q=is%3Aclosed)
-to see if your issue hasn't already been reported (it may also be fixed).
+## Developing deck.gl
 
-If you can't find an issue that matches what you're seeing, open a [new issue](https://github.com/desktop/desktop/issues/new)
-and fill out the template to provide us with enough information to investigate
-further.
+The **master** branch is the active development branch.
 
-## How can I contribute to GitHub Desktop?
+    npm install # or yarn
+    npm test
+    npm start  # See note below
 
-The [CONTRIBUTING.md](./CONTRIBUTING.md) document will help you get setup and
-familiar with the source. The [documentation](docs/) folder also contains more
-resources relevant to the project.
+Note that you will also need to do an npm install in the main example (`examples/layer-browser`)
+since the npm start command tries to build and run that example.
 
-If you're looking for something to work on, check out the [help wanted](https://github.com/desktop/desktop/issues?q=is%3Aissue+is%3Aopen+label%3A%22help%20wanted%22) label.
+    cd examples/layer-browser
+    npm install
+    cd ../..
 
-## More Resources
+Note that `npm start` in the main directory actually runs `examples/main`.
+You will need to install dependencies in that example first:
 
-See [desktop.github.com](https://desktop.github.com) for more product-oriented
-information about GitHub Desktop.
+    cd examples/main
+    npm install # or yarn
+    cd ../..
+    npm start
 
-## License
 
-**[MIT](LICENSE)**
+#### Node Version Requirement
 
-The MIT license grant is not for GitHub's trademarks, which include the logo
-designs. GitHub reserves all trademark and copyright rights in and to all
-GitHub trademarks. GitHub's logos include, for instance, the stylized
-Invertocat designs that include "logo" in the file title in the following
-folder: [logos](app/static/logos).
+Running deck.gl as a dependency in another project (e.g. via `npm i deck.gl`) requires Node `v4` or higher.
+Building deck.gl from source has a dependency on Node `v6.4` or higher.
+Either upgrade to a supported version, or install something like
+[nvm](https://github.com/creationix/nvm) to manage Node versions.
 
-GitHub® and its stylized versions and the Invertocat mark are GitHub's
-Trademarks or registered Trademarks. When using GitHub's logos, be sure to
-follow the GitHub [logo guidelines](https://github.com/logos).
+#### Install yarn
+On macOS deck.gl uses [yarn](https://www.npmjs.com/package/yarn) to manage packages.
+To develop deck.gl, [install yarn](https://yarnpkg.com/en/docs/install) with brew
+
+```
+brew update
+brew install yarn
+
+```
+
+## Contributing
+
+PRs and bug reports are welcome. Note that you once your PR is
+about to be merged, you will be asked to register as a contributor
+by filling in a short form.
+
+## Data sources
+
+[SF OpenData](https://data.sfgov.org)
+
+[TLC Trip Record Data](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)
+
+[Mapzen](https://mapzen.com/)

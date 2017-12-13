@@ -1,0 +1,180 @@
+ 
+.github 
+We are the maintainers! 
+28 days ago 
+ 
+.vscode 
+disable formatting for docs for now 
+14 days ago 
+ 
+app 
+Merge pull request #3565 from JordanMussi/fix/3013 
+8 hours ago 
+ 
+docs 
+Merge pull request #3546 from desktop/engineering-values 
+8 hours ago 
+ 
+eslint-rules 
+Revert "Revert "ESLint for great justice: Episode I"" 
+2 months ago 
+ 
+gemoji @ 50865e8 
+Get some gemoji 
+a year ago 
+ 
+script 
+Never change 
+12 days ago 
+ 
+tslint-rules 
+Revert "Revert "ESLint for great justice: Episode I"" 
+2 months ago 
+ 
+.babelrc 
+add files 
+2 minutes ago 
+ 
+.eslintignore 
+add files 
+2 minutes ago 
+ 
+.eslintrc 
+add files 
+2 minutes ago 
+ 
+.eslintrc.yml 
+Revert "Revert "ESLint for great justice: Episode I"" 
+2 months ago 
+ 
+.gitattributes 
+add files 
+2 minutes ago 
+ 
+.gitignore 
+add files 
+2 minutes ago 
+ 
+.gitmodules 
+switched this submodule over to using HTTPS 
+8 months ago 
+ 
+.node-version 
+Set node version to 8.9.2 
+3 days ago 
+ 
+.travis.yml 
+add files 
+2 minutes ago 
+ 
+CHANGELOG.md 
+add files 
+2 minutes ago 
+ 
+CODE_OF_CONDUCT.md 
+Add a Code of Conduct 
+8 months ago 
+ 
+CONTRIBUTING.md 
+its 
+13 days ago 
+ 
+Dockerfile 
+add files 
+2 minutes ago 
+ 
+LICENSE 
+add files 
+2 minutes ago 
+ 
+README.md 
+add files 
+2 minutes ago 
+ 
+appveyor.yml 
+yarn is preinstalled on appveyor, enable caching 
+21 days ago 
+ 
+changelog.json 
+1.0.11-beta0 
+6 days ago 
+ 
+circle.yml 
+the recommended install steps for Node and Yarn are broken 
+3 days ago 
+ 
+docker-compose.yml 
+add files 
+2 minutes ago 
+ 
+index.html 
+add files 
+2 minutes ago 
+ 
+package.json 
+add files 
+2 minutes ago 
+ 
+tsconfig.json 
+Okay, let's not take this fight right now 
+2 months ago 
+ 
+tslint.json 
+bump a bunch of lint dependencies 
+20 days ago 
+ 
+webpack.config.js 
+add files 
+2 minutes ago 
+ 
+yarn.lock 
+add files 
+2 minutes ago 
+ README.md 
+     
+deck.gl | Docs
+A WebGL overlay suite for React providing a set of highly performant data visualization overlays
+
+Provides tested, highly performant layers for data visualization, such as scatterplots, arcs, geometries defined in GeoJSON, etc...
+npm install --save deck.gl
+Using deck.gl
+To learn how to use deck.gl through examples coming with the deck.gl repo, please clone the latest release branch.
+git clone -b 4.1-release --single-branch https://github.com/uber/deck.gl.git
+A very simple usage of deck.gl is showcased in the hello-world examples, using both webpack2 and browserify, so you can choose which setup you prefer or are more familiar with.
+import DeckGL from 'deck.gl';
+import {ArcLayer} from 'deck.gl';
+
+const flights = new ArcLayer({
+  id: 'flights',
+  data: [] // Some flight points
+});
+
+<DeckGL width={1920} height={1080} layers={[flights]} />
+You can also take a look at the docs website or browse directly the docs folder.
+Developing deck.gl
+The master branch is the active development branch.
+npm install # or yarn
+npm test
+npm start  # See note below
+Note that you will also need to do an npm install in the main example (examples/layer-browser) since the npm start command tries to build and run that example.
+cd examples/layer-browser
+npm install
+cd ../..
+Note that npm start in the main directory actually runs examples/main. You will need to install dependencies in that example first:
+cd examples/main
+npm install # or yarn
+cd ../..
+npm start
+Node Version Requirement
+Running deck.gl as a dependency in another project (e.g. via npm i deck.gl) requires Node v4 or higher. Building deck.gl from source has a dependency on Node v6.4 or higher. Either upgrade to a supported version, or install something like nvm to manage Node versions.
+Install yarn
+On macOS deck.gl uses yarn to manage packages. To develop deck.gl, install yarn with brew
+brew update
+brew install yarn
+
+Contributing
+PRs and bug reports are welcome. Note that you once your PR is about to be merged, you will be asked to register as a contributor by filling in a short form.
+Data sources
+SF OpenData
+TLC Trip Record Data
+Mapzen

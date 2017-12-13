@@ -1,0 +1,2841 @@
+.babelrc 
+
+
+@@ -0,0 +1,20 @@
+
+
++{ 
+
+
++  "presets": [ 
+
+
++    [ 
+
+
++      "es2015", 
+
+
++      { 
+
+
++        "modules": false 
+
+
++      } 
+
+
++    ] 
+
+
++  ], 
+
+
++  "plugins": [ 
+
+
++    "version-inline" 
+
+
++  ], 
+
+
++  "env": { 
+
+
++    "test": { 
+
+
++      "plugins": [ 
+
+
++        "istanbul" 
+
+
++      ] 
+
+
++    } 
+
+
++  } 
+
+
++} 
+View   
+4 .eslintignore 
+
+
+@@ -0,0 +1,4 @@
+
+
++dist/ 
+
+
++dist-es6/ 
+
+
++node_modules/ 
+
+
++worker/ 
+View   
+15 .eslintrc 
+
+
+@@ -0,0 +1,15 @@
+
+
++{ 
+
+
++  "plugins": [ 
+
+
++    "react" 
+
+
++  ], 
+
+
++  "extends": [ 
+
+
++    "eslint-config-uber-jsx", 
+
+
++    "eslint-config-uber-es2015" 
+
+
++  ], 
+
+
++  "rules": { 
+
+
++    "guard-for-in": 0, 
+
+
++    "no-inline-comments": 0, 
+
+
++    "camelcase": 0 
+
+
++  } 
+
+
++} 
+
+
++ 
+View   
+2 .gitattributes 
+
+
+@@ -0,0 +1,2 @@
+
+
++dist/** -diff 
+
+
++dist-demo/** -diff 
+View   
+27 .gitignore 
+
+
+@@ -1,10 +1,25 @@
+
+
+-out/ 
+
+
++build/ 
+
+
+ dist/ 
+
+
++dist-es6/ 
+
+
++dist-demo/ 
+
+
+ node_modules/ 
+
+
+-npm-debug.log 
+
+
++coverage/ 
+
+
++.nyc_output/ 
+
+
++ 
+
+
++dist-bundle.js 
+
+
++examples/winds/data/*.html 
+
+
++mapbox-token.js 
+
+
++TODO 
+
+
++_docs 
+
+
++ 
+
+
++*/**/yarn.lock 
+
+
+ yarn-error.log 
+
+
+-app/node_modules/ 
+
+
++package-lock.json 
+
+
++ 
+
+
++.project 
+
+
++.idea 
+
+
+ .DS_Store 
+
+
+-.awcache 
+
+
+-.idea/ 
+
+
+-.eslintcache 
+
+
++*.zip 
+
+
++*.rar 
+
+
++*.log 
+
+
++.exit_code 
+View   
+83 .travis.yml 
+
+
+@@ -1,65 +1,30 @@
+
+
+-notifications: 
+
+
+-  email: 
+
+
+-    on_success: never 
+
+
+-    on_failure: change 
+
+
+- 
+
+
++language: node_js 
+
+
++dist: precise 
+
+
++os: linux 
+
+
++group: stable 
+
+
++sudo: required 
+
+
+ dist: trusty 
+
+
+- 
+
+
+-sudo: false 
+
+
+- 
+
+
+-matrix: 
+
+
+-  include: 
+
+
+-    - os: linux 
+
+
+-      env: CC=clang CXX=clang++ npm_config_clang=1 
+
+
+-      compiler: clang 
+
+
+- 
+
+
++env: 
+
+
++  - CXX=g++-6 
+
+
+ addons: 
+
+
+   apt: 
+
+
++    sources: 
+
+
++    - ubuntu-toolchain-r-test 
+
+
+     packages: 
+
+
+-      # this is required to compile keytar 
+
+
+-      - libsecret-1-dev 
+
+
+-      # this package is essential for testing Electron in a headless fashion 
+
+
+-      # https://github.com/electron/electron/blob/master/docs/tutorial/testing-on-headless-ci.md 
+
+
+-      - xvfb 
+
+
+-      # packages required for electron-installer-debian 
+
+
+-      - fakeroot 
+
+
+-      - dpkg 
+
+
+-      # packages required for electron-installer-redhat 
+
+
+-      - rpm 
+
+
+-      # packages required for electron-installer-appimage 
+
+
+-      - xz-utils 
+
+
+-      - xorriso 
+
+
+-      - zsync 
+
+
+- 
+
+
+-branches: 
+
+
+-  only: 
+
+
+-    - master 
+
+
+-    - /^__release-.*/ 
+
+
+- 
+
+
+-language: node_js 
+
+
++    - g++-6 
+
+
++    - mesa-utils 
+
+
++    - xvfb 
+
+
++    - libgl1-mesa-dri 
+
+
++    - libglapi-mesa 
+
+
++    - libosmesa6 
+
+
++    - libxi-dev 
+
+
+ node_js: 
+
+
+-  - "8.9.0" 
+
+
+- 
+
+
+-cache: 
+
+
+-  yarn: true 
+
+
+-  timeout: 600 
+
+
+-  directories: 
+
+
+-    - node_modules 
+
+
+-    - $HOME/.electron 
+
+
+-    - .eslintcache 
+
+
+- 
+
+
+-before_install: 
+
+
+-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.3.2 
+
+
+-  - export PATH=$HOME/.yarn/bin:$PATH 
+
+
+- 
+
+
+-install: 
+
+
+-  - yarn install --force 
+
+
+- 
+
+
++  - 6.9.1 
+
+
++before_script: 
+
+
++  - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start 
+
+
++  - ulimit -c unlimited -S       # enable core dumps 
+
+
+ script: 
+
+
+-  - yarn lint 
+
+
+-  - yarn build:prod 
+
+
+-  - yarn test:setup 
+
+
+-  - yarn test 
+
+
+- 
+
+
+-after_failure: 
+
+
+-  - yarn test:review 
+
+
++  - npm run lint 
+
+
++  - npm run cover 
+
+
++after_success: 
+
+
++  - cat coverage/lcov.info | coveralls 
+ 
+ 
+ 
+View  
+975 CHANGELOG.md 
+
+ 
+Load diff
+Large diffs are not rendered by default. 
+View  
+15 Dockerfile 
+
+
+@@ -0,0 +1,15 @@
+
+
++FROM node:8.9.0 
+
+
++ 
+
+
++WORKDIR /deck-gl 
+
+
++ENV PATH /deck-gl/node_modules/.bin:$PATH 
+
+
++ 
+
+
++# Install XVFB dependencies into container 
+
+
++ENV DISPLAY :99 
+
+
++ADD .buildkite/xvfb /etc/init.d/xvfb 
+
+
++ 
+
+
++RUN apt-get update 
+
+
++RUN apt-get -y install xvfb && chmod a+x /etc/init.d/xvfb 
+
+
++ 
+
+
++COPY package.json yarn.lock /deck-gl/ 
+
+
++ 
+
+
++RUN yarn 
+View  
+10 LICENSE 
+
+
+
+
+
+@@ -1,4 +1,4 @@
+
+
+-Copyright (c) GitHub, Inc. 
+
+
++Copyright (c) 2015 - 2017 Uber Technologies, Inc. 
+
+
+  
+
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy 
+
+
+ of this software and associated documentation files (the "Software"), to deal 
+ 
+@@ -7,13 +7,13 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+
+
+ copies of the Software, and to permit persons to whom the Software is 
+
+
+ furnished to do so, subject to the following conditions: 
+
+
+  
+
+
+-The above copyright notice and this permission notice shall be included in all 
+
+
+-copies or substantial portions of the Software. 
+
+
++The above copyright notice and this permission notice shall be included in 
+
+
++all copies or substantial portions of the Software. 
+
+
+  
+
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+
+
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+
+
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+
+
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+
+
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+
+
+-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+
+
+-SOFTWARE. 
+
+
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+
+
++THE SOFTWARE. 
+ 
+ 
+ 
+View  
+142 README.md 
+
+
+
+
+
+@@ -1,80 +1,110 @@
+
+
+-# [GitHub Desktop](https://desktop.github.com) 
+
+
++<p align="right"> 
+
+
++  <a href="https://npmjs.org/package/deck.gl"> 
+
+
++    <img src="https://img.shields.io/npm/v/deck.gl.svg?style=flat-square" alt="version" /> 
+
+
++  </a> 
+
+
++  <a href="https://travis-ci.org/uber/deck.gl"> 
+
+
++    <img src="https://img.shields.io/travis/uber/deck.gl/master.svg?style=flat-square" alt="build" /> 
+
+
++  </a> 
+
+
++  <a href="https://npmjs.org/package/deck.gl"> 
+
+
++    <img src="https://img.shields.io/npm/dm/deck.gl.svg?style=flat-square" alt="downloads" /> 
+
+
++  </a> 
+
+
++  <a href="http://starveller.sigsev.io/uber/deck.gl"> 
+
+
++    <img src="http://starveller.sigsev.io/api/repos/uber/deck.gl/badge" alt="stars" /> 
+
+
++  </a> 
+
+
++  <a href='https://coveralls.io/github/uber/deck.gl?branch=master'> 
+
+
++    <img src='https://img.shields.io/coveralls/uber/deck.gl.svg?style=flat-square' alt='Coverage Status' /> 
+
+
++  </a> 
+
+
++</p> 
+
+
+  
+
+
+-[![Travis](https://img.shields.io/travis/desktop/desktop.svg?style=flat-square&label=Travis+CI)](https://travis-ci.org/desktop/desktop) 
+
+
+-[![CircleCI](https://img.shields.io/circleci/project/github/desktop/desktop.svg?style=flat-square&label=CircleCI)](https://circleci.com/gh/desktop/desktop) 
+
+
+-[![AppVeyor Build Status](https://img.shields.io/appveyor/ci/github-windows/desktop/master.svg?style=flat-square&label=AppVeyor&logo=appveyor)](https://ci.appveyor.com/project/github-windows/desktop/branch/master) 
+
+
+-[![license](https://img.shields.io/github/license/desktop/desktop.svg?style=flat-square)](https://github.com/desktop/desktop/blob/master/LICENSE) 
+
+
+-![90+% TypeScript](https://img.shields.io/github/languages/top/desktop/desktop.svg?style=flat-square&colorB=green) 
+
+
++<h1 align="center">deck.gl | <a href="https://uber.github.io/deck.gl">Docs</a></h1> 
+
+
+  
+
+
+-GitHub Desktop is an open source [Electron](https://electron.atom.io)-based 
+
+
+-GitHub app. It is written in [TypeScript](http://www.typescriptlang.org) and 
+
+
+-uses [React](https://facebook.github.io/react/). 
+
+
++<h5 align="center">A WebGL overlay suite for React providing a set of highly performant data visualization overlays</h5> 
+
+
+  
+
+
+-![GitHub Desktop screenshot - Windows](https://cloud.githubusercontent.com/assets/359239/26094502/a1f56d02-3a5d-11e7-8799-23c7ba5e5106.png) 
+
+
++[![docs](http://i.imgur.com/mvfvgf0.jpg)](https://uber.github.io/deck.gl) 
+
+
+  
+
+
+-## Where can I get it? 
+
+
++Provides tested, highly performant layers for data visualization, 
+
+
++such as scatterplots, arcs, geometries defined in GeoJSON, etc... 
+
+
+  
+
+
+-Download the official installer for your operating system: 
+
+
++    npm install --save deck.gl 
+
+
+  
+
+
+- - [macOS](https://central.github.com/deployments/desktop/desktop/latest/darwin) 
+
+
+- - [Windows](https://central.github.com/deployments/desktop/desktop/latest/win32) 
+
+
+- - [Windows machine-wide install](https://central.github.com/deployments/desktop/desktop/latest/win32?format=msi) 
+
+
++## Using deck.gl 
+
+
+  
+
+
+-There are several community-supported package managers that can be used to install Github Desktop. 
+
+
+- - Windows users can install using [Chocolatey](https://chocolatey.org/) package manager: 
+
+
+-      `c:\> choco install github-desktop` 
+
+
+- - macOS users can install using [Homebrew](https://brew.sh/) package manager: 
+
+
+-      `$ brew cask install github` 
+
+
+- - Arch Linux users can install the latest version from the [AUR](https://aur.archlinux.org/packages/github-desktop/). 
+
+
++To learn how to use deck.gl through examples coming with the deck.gl repo, 
+
+
++please clone the latest **release** branch. 
+
+
+  
+
+
+-You can install this alongside your existing GitHub Desktop for Mac or GitHub 
+
+
+-Desktop for Windows application. 
+
+
++`git clone -b 4.1-release --single-branch https://github.com/uber/deck.gl.git` 
+
+
+  
+
+
+-**NOTE**: there is no current migration path to import your existing 
+
+
+-repositories into the new application - you can drag-and-drop your repositories 
+
+
+-from disk onto the application to get started. 
+
+
++A very simple usage of deck.gl is showcased in the [hello-world examples](./examples), 
+
+
++using both [webpack2](./examples/hello-world-webpack2) and 
+
+
++[browserify](./examples/hello-world-browserify), 
+
+
++so you can choose which setup you prefer or are more familiar with. 
+
+
+  
+
+
+-### Beta Channel 
+
+
++```javascript 
+
+
++import DeckGL from 'deck.gl'; 
+
+
++import {ArcLayer} from 'deck.gl'; 
+
+
+  
+
+
+-Want to test out new features and get fixes before everyone else? Install the 
+
+
+-beta channel to get access to early builds of Desktop: 
+
+
++const flights = new ArcLayer({ 
+
+
++  id: 'flights', 
+
+
++  data: [] // Some flight points 
+
+
++}); 
+
+
+  
+
+
+- - [macOS](https://central.github.com/deployments/desktop/desktop/latest/darwin?env=beta) 
+
+
+- - [Windows](https://central.github.com/deployments/desktop/desktop/latest/win32?env=beta) 
+
+
++<DeckGL width={1920} height={1080} layers={[flights]} /> 
+
+
++``` 
+
+
+  
+
+
+-## I have a problem with GitHub Desktop 
+
+
++You can also take a look at the [docs website](https://uber.github.io/deck.gl) 
+
+
++or browse directly the [docs folder](./docs). 
+
+
+  
+
+
+-First, please search the [open issues](https://github.com/desktop/desktop/issues?q=is%3Aopen) 
+
+
+-and [closed issues](https://github.com/desktop/desktop/issues?q=is%3Aclosed) 
+
+
+-to see if your issue hasn't already been reported (it may also be fixed). 
+
+
++## Developing deck.gl 
+
+
+  
+
+
+-If you can't find an issue that matches what you're seeing, open a [new issue](https://github.com/desktop/desktop/issues/new) 
+
+
+-and fill out the template to provide us with enough information to investigate 
+
+
+-further. 
+
+
++The **master** branch is the active development branch. 
+
+
+  
+
+
+-## How can I contribute to GitHub Desktop? 
+
+
++    npm install # or yarn 
+
+
++    npm test 
+
+
++    npm start  # See note below 
+
+
+  
+
+
+-The [CONTRIBUTING.md](./CONTRIBUTING.md) document will help you get setup and 
+
+
+-familiar with the source. The [documentation](docs/) folder also contains more 
+
+
+-resources relevant to the project. 
+
+
++Note that you will also need to do an npm install in the main example (`examples/layer-browser`) 
+
+
++since the npm start command tries to build and run that example. 
+
+
+  
+
+
+-If you're looking for something to work on, check out the [help wanted](https://github.com/desktop/desktop/issues?q=is%3Aissue+is%3Aopen+label%3A%22help%20wanted%22) label. 
+
+
++    cd examples/layer-browser 
+
+
++    npm install 
+
+
++    cd ../.. 
+
+
+  
+
+
+-## More Resources 
+
+
++Note that `npm start` in the main directory actually runs `examples/main`. 
+
+
++You will need to install dependencies in that example first: 
+
+
+  
+
+
+-See [desktop.github.com](https://desktop.github.com) for more product-oriented 
+
+
+-information about GitHub Desktop. 
+
+
++    cd examples/main 
+
+
++    npm install # or yarn 
+
+
++    cd ../.. 
+
+
++    npm start 
+
+
+  
+
+
+-## License 
+
+
+  
+
+
+-**[MIT](LICENSE)** 
+
+
++#### Node Version Requirement 
+
+
+  
+
+
+-The MIT license grant is not for GitHub's trademarks, which include the logo 
+
+
+-designs. GitHub reserves all trademark and copyright rights in and to all 
+
+
+-GitHub trademarks. GitHub's logos include, for instance, the stylized 
+
+
+-Invertocat designs that include "logo" in the file title in the following 
+
+
+-folder: [logos](app/static/logos). 
+
+
++Running deck.gl as a dependency in another project (e.g. via `npm i deck.gl`) requires Node `v4` or higher. 
+
+
++Building deck.gl from source has a dependency on Node `v6.4` or higher. 
+
+
++Either upgrade to a supported version, or install something like 
+
+
++[nvm](https://github.com/creationix/nvm) to manage Node versions. 
+
+
+  
+
+
+-GitHub® and its stylized versions and the Invertocat mark are GitHub's 
+
+
+-Trademarks or registered Trademarks. When using GitHub's logos, be sure to 
+
+
+-follow the GitHub [logo guidelines](https://github.com/logos). 
+
+
++#### Install yarn 
+
+
++On macOS deck.gl uses [yarn](https://www.npmjs.com/package/yarn) to manage packages. 
+
+
++To develop deck.gl, [install yarn](https://yarnpkg.com/en/docs/install) with brew 
+
+
++ 
+
+
++``` 
+
+
++brew update 
+
+
++brew install yarn 
+
+
++ 
+
+
++``` 
+
+
++ 
+
+
++## Contributing 
+
+
++ 
+
+
++PRs and bug reports are welcome. Note that you once your PR is 
+
+
++about to be merged, you will be asked to register as a contributor 
+
+
++by filling in a short form. 
+
+
++ 
+
+
++## Data sources 
+
+
++ 
+
+
++[SF OpenData](https://data.sfgov.org) 
+
+
++ 
+
+
++[TLC Trip Record Data](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) 
+
+
++ 
+
+
++[Mapzen](https://mapzen.com/) 
+View  
+7 docker-compose.yml 
+
+
+@@ -0,0 +1,7 @@
+
+
++version: '2' 
+
+
++services: 
+
+
++  deck-gl: 
+
+
++    build: . 
+
+
++    volumes: 
+
+
++      - .:/deck-gl 
+
+
++      - /deck-gl/node_modules/ 
+View  
+9 index.html 
+
+
+@@ -0,0 +1,9 @@
+
+
++<!doctype html> 
+
+
++<html> 
+
+
++  <head> 
+
+
++    <title>deck.gl tests</title> 
+
+
++  </head> 
+
+
++  <body> 
+
+
++    <script src='test-browser-bundle.js'></script> 
+
+
++  </body> 
+
+
++</html> 
+View  
+226 package.json 
+
+
+@@ -1,144 +1,108 @@
+
+
+ { 
+
+
++  "name": "deck.gl", 
+
+
++  "description": "A suite of 3D-enabled data visualization overlays, suitable for react-map-gl", 
+
+
++  "license": "MIT", 
+
+
++  "version": "4.2.0-alpha.29", 
+
+
++  "keywords": [ 
+
+
++    "webgl", 
+
+
++    "visualization", 
+
+
++    "overlay", 
+
+
++    "layer" 
+
+
++  ], 
+
+
+   "repository": { 
+
+
+     "type": "git", 
+
+
+-    "url": "https://github.com/desktop/desktop.git" 
+
+
++    "url": "https://github.com/uber/deck.gl.git" 
+
+
+   }, 
+
+
+-  "description": "GitHub Desktop build dependencies", 
+
+
++  "main": "dist/index.js", 
+
+
++  "module": "dist-es6/index.js", 
+
+
++  "files": [ 
+
+
++    "dist", 
+
+
++    "dist-es6", 
+
+
++    "src" 
+
+
++  ], 
+
+
+   "scripts": { 
+
+
+-    "cli": "ts-node --require ./app/test/globals.ts --require ./app/src/cli/dev-commands-global.js app/src/cli/main.ts", 
+
+
+-    "test:integration": "cross-env TEST_ENV=1 ELECTRON_NO_ATTACH_CONSOLE=1 xvfb-maybe mocha -t 30000 --require ts-node/register app/test/integration/*.ts", 
+
+
+-    "test:unit": "cross-env GIT_AUTHOR_NAME=\"Joe Bloggs\" GIT_AUTHOR_EMAIL=\"joe.bloggs@somewhere.com\" GIT_COMMITTER_NAME=\"Joe Bloggs\" GIT_COMMITTER_EMAIL=\"joe.bloggs@somewhere.com\" TEST_ENV=1 ELECTRON_NO_ATTACH_CONSOLE=1 xvfb-maybe electron-mocha -t 10000 --renderer --require ts-node/register --require ./app/test/globals.ts app/test/unit/*.{ts,tsx} app/test/unit/**/*.{ts,tsx}", 
+
+
+-    "test": "yarn test:unit && yarn test:integration", 
+
+
+-    "test:setup": "ts-node script/test-setup.ts", 
+
+
+-    "test:review": "ts-node script/test-review.ts", 
+
+
+-    "postinstall": "cd app && yarn install --force && cd .. && git submodule update --recursive --init && yarn compile:tslint", 
+
+
+-    "start": "cross-env NODE_ENV=development node script/start", 
+
+
+-    "start:prod": "cross-env NODE_ENV=production node script/start", 
+
+
+-    "debug": "cross-env NODE_ENV=development node script/debug", 
+
+
+-    "compile:dev": "cross-env NODE_ENV=development parallel-webpack --config app/webpack.development.js", 
+
+
+-    "compile:prod": "cross-env NODE_ENV=production parallel-webpack --config app/webpack.production.js", 
+
+
+-    "build:dev": "yarn compile:dev && cross-env NODE_ENV=development ts-node script/build.ts", 
+
+
+-    "build:prod": "yarn compile:prod && cross-env NODE_ENV=production ts-node script/build.ts", 
+
+
+-    "package": "ts-node -P script script/package.ts", 
+
+
+-    "generate-octicons": "ts-node script/generate-octicons.ts", 
+
+
+-    "clean:tslint": "rimraf tslint-rules/*.js", 
+
+
+-    "compile:tslint": "tsc -p tslint-rules", 
+
+
+-    "compile:script": "tsc -p script", 
+
+
+-    "lint": "yarn compile:tslint && yarn compile:script && yarn tslint && yarn eslint-check && yarn eslint", 
+
+
+-    "lint:fix": "yarn compile:tslint && yarn tslint:fix && yarn eslint:fix", 
+
+
+-    "tslint": "tslint ./{script,tslint-rules}/*.ts ./app/{src,typings,test}/**/*.{ts,tsx}", 
+
+
+-    "tslint:fix": "yarn tslint --fix", 
+
+
+-    "eslint": "ts-node script/eslint.ts", 
+
+
+-    "eslint:fix": "yarn eslint --fix", 
+
+
+-    "eslint-check": "eslint --print-config .eslintrc.* | eslint-config-prettier-check", 
+
+
+-    "publish": "node script/publish", 
+
+
+-    "clean-slate": "rimraf out node_modules app/node_modules && yarn", 
+
+
+-    "rebuild-hard:dev": "yarn clean-slate && yarn build:dev", 
+
+
+-    "rebuild-hard:prod": "yarn clean-slate && yarn build:prod" 
+
+
+-  }, 
+
+
+-  "author": { 
+
+
+-    "name": "GitHub, Inc.", 
+
+
+-    "email": "opensource+desktop@github.com", 
+
+
+-    "url": "https://desktop.github.com/" 
+
+
+-  }, 
+
+
+-  "license": "MIT", 
+
+
+-  "engines": { 
+
+
+-    "node": ">= 7", 
+
+
+-    "yarn": ">= 1.2.0" 
+
+
++    "start": "(cd examples/layer-browser && (path-exists node_modules || npm i) && npm run start-local)", 
+
+
++    "build-clean": "rm -fr dist dist-es6 && mkdir -p dist dist-es6", 
+
+
++    "build-es6": "rm -fr dist-es6 && babel src --out-dir dist-es6 --source-maps inline", 
+
+
++    "build-es5": "rm -fr dist && babel src --out-dir dist --plugins=transform-es2015-modules-commonjs --source-maps inline", 
+
+
++    "build": "npm run build-clean && npm run build-es6 && npm run build-es5", 
+
+
++    "cover": "NODE_ENV=test nyc --reporter html --reporter cobertura --reporter=lcov npm run test-cover", 
+
+
++    "lint": "eslint src test examples && npm run lint-yarn", 
+
+
++    "lint-yarn": "!(grep -q unpm.u yarn.lock) || (echo 'Please rebuild yarn file using public npmrc' && false)", 
+
+
++    "publish-prod": "npm run build && npm run test && npm run test-dist && npm publish", 
+
+
++    "publish-beta": "npm run build && npm run test && npm run test-dist && npm publish --tag beta", 
+
+
++    "test": "npm run lint && npm run build && npm run test-node", 
+
+
++    "test-fast": "npm run test-node", 
+
+
++    "test-cover": "NODE_ENV=test tape -r babel-register test/node.js && nyc report", 
+
+
++    "test-node": "node test/node.js", 
+
+
++    "test-dist": "node test/node-dist.js", 
+
+
++    "test-browser": "webpack-dev-server --env.test --progress --hot --open", 
+
+
++    "bench": "node test/bench/node.js", 
+
+
++    "bench-browser": "webpack-dev-server --env.bench --progress --hot --open", 
+
+
++    "test-rendering": "(cd test/rendering-test && webpack-dev-server --config webpack.config.test-rendering.js --progress --hot --open)" 
+
+
+   }, 
+
+
+   "dependencies": { 
+
+
+-    "awesome-typescript-loader": "^3.4.0", 
+
+
+-    "aws-sdk": "^2.23.0", 
+
+
+-    "babel-core": "^6.24.1", 
+
+
+-    "babel-minify": "^0.2.0", 
+
+
+-    "babel-webpack-plugin": "^0.1.1", 
+
+
+-    "chai": "^4.1.1", 
+
+
+-    "chai-as-promised": "^7.1.1", 
+
+
+-    "chai-datetime": "^1.4.1", 
+
+
+-    "chalk": "^2.2.0", 
+
+
+-    "clean-webpack-plugin": "^0.1.16", 
+
+
+-    "cross-env": "^5.0.5", 
+
+
+-    "css-loader": "^0.28.5", 
+
+
+-    "eslint": "^4.12.0", 
+
+
+-    "eslint-config-prettier": "^2.9.0", 
+
+
+-    "eslint-plugin-babel": "^4.1.2", 
+
+
+-    "eslint-plugin-prettier": "^2.1.2", 
+
+
+-    "eslint-plugin-react": "^7.5.1", 
+
+
+-    "eslint-plugin-typescript": "^0.8.1", 
+
+
+-    "express": "^4.15.0", 
+
+
+-    "extract-text-webpack-plugin": "^3.0.0", 
+
+
+-    "fs-extra": "^2.1.2", 
+
+
+-    "html-webpack-plugin": "^2.30.1", 
+
+
+-    "klaw-sync": "^3.0.0", 
+
+
+-    "legal-eagle": "0.15.0", 
+
+
+-    "mocha": "^4.0.1", 
+
+
+-    "node-native-loader": "^1.1.1", 
+
+
+-    "node-sass": "^4.5.2", 
+
+
+-    "octicons": "^7.0.1", 
+
+
+-    "parallel-webpack": "^2.1.0", 
+
+
+-    "prettier": "1.8.2", 
+
+
+-    "request": "^2.72.0", 
+
+
+-    "rimraf": "^2.5.2", 
+
+
+-    "sass-loader": "^6.0.6", 
+
+
+-    "spectron": "^3.7.2", 
+
+
+-    "style-loader": "^0.18.2", 
+
+
+-    "to-camel-case": "^1.0.0", 
+
+
+-    "ts-node": "^3.2.0", 
+
+
+-    "tslint": "^5.8.0", 
+
+
+-    "tslint-config-prettier": "^1.1.0", 
+
+
+-    "tslint-microsoft-contrib": "^5.0.1", 
+
+
+-    "tslint-react": "~3.2.0", 
+
+
+-    "typescript": "2.6.2", 
+
+
+-    "typescript-eslint-parser": "^9.0.0", 
+
+
+-    "webpack": "^3.5.5", 
+
+
+-    "webpack-dev-middleware": "^1.12.0", 
+
+
+-    "webpack-hot-middleware": "^2.18.0", 
+
+
+-    "webpack-merge": "^4.1.0", 
+
+
+-    "xml2js": "^0.4.16", 
+
+
+-    "xvfb-maybe": "^0.2.1" 
+
+
++    "d3-hexbin": "^0.2.1", 
+
+
++    "earcut": "^2.0.6", 
+
+
++    "lodash.flattendeep": "^4.4.0", 
+
+
++    "luma.gl": ">=4.1.0-beta.1", 
+
+
++    "math.gl": ">= 1.0.0-alpha.8", 
+
+
++    "mjolnir.js": ">=0.1.0", 
+
+
++    "prop-types": "^15.5.8", 
+
+
++    "seer": "^0.2.3", 
+
+
++    "viewport-mercator-project": "^5.0.0-alpha.1" 
+
+
+   }, 
+
+
+   "devDependencies": { 
+
+
+-    "@types/byline": "^4.2.31", 
+
+
+-    "@types/chai": "^4.0.5", 
+
+
+-    "@types/chai-datetime": "^0.0.31", 
+
+
+-    "@types/classnames": "^2.2.2", 
+
+
+-    "@types/codemirror": "^0.0.49", 
+
+
+-    "@types/electron-packager": "^8.7.1", 
+
+
+-    "@types/electron-winstaller": "^2.6.0", 
+
+
+-    "@types/event-kit": "^1.2.28", 
+
+
+-    "@types/file-url": "^2.0.0", 
+
+
+-    "@types/fs-extra": "2.1.0", 
+
+
+-    "@types/keytar": "^4.0.0", 
+
+
+-    "@types/mocha": "^2.2.29", 
+
+
+-    "@types/mri": "^1.1.0", 
+
+
+-    "@types/node": "^7.0.18", 
+
+
+-    "@types/react": "^16.0.19", 
+
+
+-    "@types/react-addons-test-utils": "^0.14.20", 
+
+
+-    "@types/react-dom": "^16.0.2", 
+
+
+-    "@types/react-transition-group": "1.1.1", 
+
+
+-    "@types/react-virtualized": "^9.7.4", 
+
+
+-    "@types/strip-ansi": "^3.0.0", 
+
+
+-    "@types/temp": "^0.8.29", 
+
+
+-    "@types/to-camel-case": "^1.0.0", 
+
+
+-    "@types/ua-parser-js": "^0.7.30", 
+
+
+-    "@types/uuid": "^3.4.0", 
+
+
+-    "@types/winston": "^2.2.0", 
+
+
+-    "@types/xml2js": "^0.4.0", 
+
+
+-    "electron": "1.7.9", 
+
+
+-    "electron-builder": "19.45.5", 
+
+
+-    "electron-installer-appimage": "^1.0.1", 
+
+
+-    "electron-mocha": "^5.0.0", 
+
+
+-    "electron-packager": "^8.7.2", 
+
+
+-    "electron-winstaller": "2.5.2" 
+
+
++    "babel-cli": "^6.22.2", 
+
+
++    "babel-core": "^6.22.1", 
+
+
++    "babel-loader": "^6.2.10", 
+
+
++    "babel-plugin-istanbul": "^4.1.1", 
+
+
++    "babel-plugin-transform-builtin-extend": "^1.1.2", 
+
+
++    "babel-plugin-transform-es2015-modules-commonjs": "^6.22.0", 
+
+
++    "babel-plugin-version-inline": "^1.0.0", 
+
+
++    "babel-polyfill": "^6.20.0", 
+
+
++    "babel-preset-es2015": "^6.4.3", 
+
+
++    "benchmark": "^2.1.3", 
+
+
++    "brfs-babel": "^1.0.0", 
+
+
++    "coveralls": "^2.13.0", 
+
+
++    "eslint": "^3.0.0", 
+
+
++    "eslint-config-uber-es2015": "^3.0.0", 
+
+
++    "eslint-config-uber-jsx": "^3.0.0", 
+
+
++    "eslint-plugin-react": "~6.7.0", 
+
+
++    "file-loader": "^0.10.1", 
+
+
++    "gl": "^4.0.3", 
+
+
++    "immutable": "^3.8.1", 
+
+
++    "jsdom": "^9.11.0", 
+
+
++    "module-alias": "^2.0.0", 
+
+
++    "nyc": "^10.2.0", 
+
+
++    "pre-commit": "^1.2.2", 
+
+
++    "probe.gl": "^0.0.2", 
+
+
++    "raw-loader": "^0.5.1", 
+
+
++    "react": "^15.4.0", 
+
+
++    "react-dom": "^15.4.0", 
+
+
++    "reify": "^0.4.4", 
+
+
++    "source-map-loader": "^0.2.1", 
+
+
++    "tap-browser-color": "^0.1.2", 
+
+
++    "tape": "4.8", 
+
+
++    "tape-catch": "^1.0.4", 
+
+
++    "transform-loader": "^0.2.3", 
+
+
++    "uglify-js": "^2.6.1", 
+
+
++    "webpack": "^2.4.0", 
+
+
++    "webpack-dev-server": "^2.4.0" 
+
+
+   }, 
+
+
+-  "optionalDependencies": { 
+
+
+-    "electron-installer-debian": "^0.7.1", 
+
+
+-    "electron-installer-redhat": "^0.5.0" 
+
+
++  "peerDependencies": { 
+
+
++    "react": "0.14.x - 16.x", 
+
+
++    "react-dom": "0.14.x - 16.x" 
+
+
+   }, 
+
+
+-  "build": { 
+
+
+-    "linux": { 
+
+
+-      "category": "Development", 
+
+
+-      "icon": "app/static/logos" 
+
+
+-    } 
+
+
++  "nyc": { 
+
+
++    "sourceMap": false, 
+
+
++    "instrument": false, 
+
+
++    "include": [ 
+
+
++      "src/**/*.js" 
+
+
++    ], 
+
+
++    "exclude": [ 
+
+
++      "test/**/*.js", 
+
+
++      "src/layers/deprecated" 
+
+
++    ] 
+
+
+   } 
+
+
+ } 
+View  
+180 skoup 
+
+
+@@ -0,0 +1,180 @@
+
+
++  
+
+
++.github  
+
+
++We are the maintainers!  
+
+
++28 days ago  
+
+
++  
+
+
++.vscode  
+
+
++disable formatting for docs for now  
+
+
++14 days ago  
+
+
++  
+
+
++app  
+
+
++Merge pull request #3565 from JordanMussi/fix/3013  
+
+
++8 hours ago  
+
+
++  
+
+
++docs  
+
+
++Merge pull request #3546 from desktop/engineering-values  
+
+
++8 hours ago  
+
+
++  
+
+
++eslint-rules  
+
+
++Revert "Revert "ESLint for great justice: Episode I""  
+
+
++2 months ago  
+
+
++  
+
+
++gemoji @ 50865e8  
+
+
++Get some gemoji  
+
+
++a year ago  
+
+
++  
+
+
++script  
+
+
++Never change  
+
+
++12 days ago  
+
+
++  
+
+
++tslint-rules  
+
+
++Revert "Revert "ESLint for great justice: Episode I""  
+
+
++2 months ago  
+
+
++  
+
+
++.babelrc  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++.eslintignore  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++.eslintrc  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++.eslintrc.yml  
+
+
++Revert "Revert "ESLint for great justice: Episode I""  
+
+
++2 months ago  
+
+
++  
+
+
++.gitattributes  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++.gitignore  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++.gitmodules  
+
+
++switched this submodule over to using HTTPS  
+
+
++8 months ago  
+
+
++  
+
+
++.node-version  
+
+
++Set node version to 8.9.2  
+
+
++3 days ago  
+
+
++  
+
+
++.travis.yml  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++CHANGELOG.md  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++CODE_OF_CONDUCT.md  
+
+
++Add a Code of Conduct  
+
+
++8 months ago  
+
+
++  
+
+
++CONTRIBUTING.md  
+
+
++its  
+
+
++13 days ago  
+
+
++  
+
+
++Dockerfile  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++LICENSE  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++README.md  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++appveyor.yml  
+
+
++yarn is preinstalled on appveyor, enable caching  
+
+
++21 days ago  
+
+
++  
+
+
++changelog.json  
+
+
++1.0.11-beta0  
+
+
++6 days ago  
+
+
++  
+
+
++circle.yml  
+
+
++the recommended install steps for Node and Yarn are broken  
+
+
++3 days ago  
+
+
++  
+
+
++docker-compose.yml  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++index.html  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++package.json  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++tsconfig.json  
+
+
++Okay, let's not take this fight right now  
+
+
++2 months ago  
+
+
++  
+
+
++tslint.json  
+
+
++bump a bunch of lint dependencies  
+
+
++20 days ago  
+
+
++  
+
+
++webpack.config.js  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++  
+
+
++yarn.lock  
+
+
++add files  
+
+
++2 minutes ago  
+
+
++ README.md  
+
+
++      
+
+
++deck.gl | Docs 
+
+
++A WebGL overlay suite for React providing a set of highly performant data visualization overlays 
+
+
++ 
+
+
++Provides tested, highly performant layers for data visualization, such as scatterplots, arcs, geometries defined in GeoJSON, etc... 
+
+
++npm install --save deck.gl 
+
+
++Using deck.gl 
+
+
++To learn how to use deck.gl through examples coming with the deck.gl repo, please clone the latest release branch. 
+
+
++git clone -b 4.1-release --single-branch https://github.com/uber/deck.gl.git 
+
+
++A very simple usage of deck.gl is showcased in the hello-world examples, using both webpack2 and browserify, so you can choose which setup you prefer or are more familiar with. 
+
+
++import DeckGL from 'deck.gl'; 
+
+
++import {ArcLayer} from 'deck.gl'; 
+
+
++ 
+
+
++const flights = new ArcLayer({ 
+
+
++  id: 'flights', 
+
+
++  data: [] // Some flight points 
+
+
++}); 
+
+
++ 
+
+
++<DeckGL width={1920} height={1080} layers={[flights]} /> 
+
+
++You can also take a look at the docs website or browse directly the docs folder. 
+
+
++Developing deck.gl 
+
+
++The master branch is the active development branch. 
+
+
++npm install # or yarn 
+
+
++npm test 
+
+
++npm start  # See note below 
+
+
++Note that you will also need to do an npm install in the main example (examples/layer-browser) since the npm start command tries to build and run that example. 
+
+
++cd examples/layer-browser 
+
+
++npm install 
+
+
++cd ../.. 
+
+
++Note that npm start in the main directory actually runs examples/main. You will need to install dependencies in that example first: 
+
+
++cd examples/main 
+
+
++npm install # or yarn 
+
+
++cd ../.. 
+
+
++npm start 
+
+
++Node Version Requirement 
+
+
++Running deck.gl as a dependency in another project (e.g. via npm i deck.gl) requires Node v4 or higher. Building deck.gl from source has a dependency on Node v6.4 or higher. Either upgrade to a supported version, or install something like nvm to manage Node versions. 
+
+
++Install yarn 
+
+
++On macOS deck.gl uses yarn to manage packages. To develop deck.gl, install yarn with brew 
+
+
++brew update 
+
+
++brew install yarn 
+
+
++ 
+
+
++Contributing 
+
+
++PRs and bug reports are welcome. Note that you once your PR is about to be merged, you will be asked to register as a contributor by filling in a short form. 
+
+
++Data sources 
+
+
++SF OpenData 
+
+
++TLC Trip Record Data 
+
+
++Mapzen 
+View  
+116 webpack.config.js 
+
+
+@@ -0,0 +1,116 @@
+
+
++const {resolve} = require('path'); 
+
+
++const webpack = require('webpack'); 
+
+
++ 
+
+
++const LIBRARY_BUNDLE_CONFIG = { 
+
+
++  // Bundle the source code 
+
+
++  entry: { 
+
+
++    lib: resolve('./src/index.js') 
+
+
++  }, 
+
+
++ 
+
+
++  // Silence warnings about big bundles 
+
+
++  stats: { 
+
+
++    warnings: false 
+
+
++  }, 
+
+
++ 
+
+
++  output: { 
+
+
++    // Generate the bundle in dist folder 
+
+
++    path: resolve('./dist'), 
+
+
++    filename: '[name]-bundle.js', 
+
+
++    library: 'deck.gl', 
+
+
++    libraryTarget: 'umd' 
+
+
++  }, 
+
+
++ 
+
+
++  // Exclude any non-relative imports from resulting bundle 
+
+
++  externals: [ 
+
+
++    /^[a-z\.\-0-9]+$/ 
+
+
++  ], 
+
+
++ 
+
+
++  module: { 
+
+
++    rules: [ 
+
+
++      { 
+
+
++        // Inline shaders 
+
+
++        test: /\.glsl$/, 
+
+
++        exclude: /node_modules/, 
+
+
++        loader(content) { 
+
+
++          this.cacheable && this.cacheable(); // eslint-disable-line 
+
+
++          this.value = content; 
+
+
++          return "module.exports = " + JSON.stringify(content); // eslint-disable-line 
+
+
++        } 
+
+
++      } 
+
+
++    ] 
+
+
++  }, 
+
+
++ 
+
+
++  node: { 
+
+
++    fs: 'empty' 
+
+
++  }, 
+
+
++ 
+
+
++  plugins: [ 
+
+
++    // leave minification to app 
+
+
++    // new webpack.optimize.UglifyJsPlugin({comments: false}) 
+
+
++    new webpack.DefinePlugin({ 
+
+
++      DECK_VERSION: JSON.stringify(require('./package.json').version) 
+
+
++    }) 
+
+
++  ] 
+
+
++}; 
+
+
++ 
+
+
++const TEST_BROWSER_CONFIG = { 
+
+
++  devServer: { 
+
+
++    stats: { 
+
+
++      warnings: false 
+
+
++    }, 
+
+
++    quiet: true 
+
+
++  }, 
+
+
++ 
+
+
++  // Bundle the tests for running in the browser 
+
+
++  entry: { 
+
+
++    'test-browser': resolve('./test/browser.js') 
+
+
++  }, 
+
+
++ 
+
+
++  // Generate a bundle in dist folder 
+
+
++  output: { 
+
+
++    path: resolve('./dist'), 
+
+
++    filename: '[name]-bundle.js' 
+
+
++  }, 
+
+
++ 
+
+
++  devtool: '#inline-source-maps', 
+
+
++ 
+
+
++  resolve: { 
+
+
++    alias: { 
+
+
++      'deck.gl/test': resolve('./test'), 
+
+
++      'deck.gl': resolve('./src') 
+
+
++    } 
+
+
++  }, 
+
+
++ 
+
+
++  module: { 
+
+
++    rules: [] 
+
+
++  }, 
+
+
++ 
+
+
++  node: { 
+
+
++    fs: 'empty' 
+
+
++  }, 
+
+
++ 
+
+
++  plugins: [] 
+
+
++}; 
+
+
++ 
+
+
++const BENCH_BROWSER_CONFIG = Object.assign({}, TEST_BROWSER_CONFIG, { 
+
+
++  entry: { 
+
+
++    'test-browser': resolve('./test/bench/browser.js') 
+
+
++  } 
+
+
++}); 
+
+
++ 
+
+
++// Replace the entry point for webpack-dev-server 
+
+
++ 
+
+
++BENCH_BROWSER_CONFIG.module.noParse = [ 
+
+
++  /benchmark/ 
+
+
++]; 
+
+
++ 
+
+
++module.exports = env => { 
+
+
++  env = env || {}; 
+
+
++  if (env.bench) { 
+
+
++    return BENCH_BROWSER_CONFIG; 
+
+
++  } 
+
+
++  if (env.test) { 
+
+
++    return TEST_BROWSER_CONFIG; 
+
+
++  } 
+
+
++  return LIBRARY_BUNDLE_CONFIG; 
+
+
++}; 
+View  
+5,677 yarn.lock 
+
+ 
+Load diff
+Large diffs are not rendered by default. 
+        
