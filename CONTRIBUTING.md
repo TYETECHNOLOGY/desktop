@@ -1,173 +1,243 @@
-# Contributing to GitHub Desktop
+# Mobile Center CLI - command line for Mobile Center
+(Kind of obvious from the name, really)
 
-:+1: :tada: :sparkling_heart: Thanks for your interest! :sparkling_heart: :tada: :+1:
+Mobile Center CLI is a command line interface to interact with the Mobile Center services. It's intended
+for use by mobile developers and people building scripts that need to interact with Mobile Center (for example,
+local CI configurations).
 
-The following is a set of guidelines for contributing to GitHub Desktop and its
-related projects, which are hosted in the [Desktop organization](https://github.com/desktop)
-on GitHub. These are just guidelines, not rules. Use your best judgment, and
-feel free to propose changes to this document in a pull request.
+## Technologies Used
 
-Note that GitHub Desktop is an evolving project, so expect things to change over
-time as the team learns, listens and refines how we work with the community.
+Mobile center cli is written using Node.js version 6 and [Typescript](http://typescriptlang.org). Wrappers over the Bifrost HTTP API are
+generated using the [AutoRest](https://github.com/Azure/autorest) code generator. And the usual
+plethora of npm modules.
 
-#### Table Of Contents
+We use [mocha](https://http://mochajs.org/) for a test runner / framework. [Chai](http://http://chaijs.com/) is
+the assertion library. [Sinon](http://sinonjs.org) is the general mocking library, and [nock](https://github.com/node-nock/nock)
+will be used to record and playback mock http traffic. [Note: this isn't set up yet.]
 
-[What should I know before I get started?](#what-should-i-know-before-i-get-started)
-  * [Code of Conduct](#code-of-conduct)
-  * [The Roadmap](#the-roadmap)
+# Setting Up
 
-[How Can I Contribute?](#how-can-i-contribute)
-  * [Reporting Bugs](#reporting-bugs)
-  * [Suggesting Enhancements](#suggesting-enhancements)
-  * [Help Wanted](#help-wanted)
+## Prerequisites
 
-[Additional Notes](#additional-notes)
-  * [Issue and Pull Request Labels](#issue-and-pull-request-labels)
+Install the latese version of Node 6 from [here](https://nodejs.org). If you are on a Mac, we recommend
+a 64-bit version.
 
-## What should I know before I get started?
+Also have a working git installation. The code is available from this [repo](https://github.com/Microsoft/mobile-center-cli).
 
-### Code of Conduct
 
-This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md).
-By participating, you are expected to uphold this code.
-Please report unacceptable behavior to [opensource+desktop@github.com](mailto:opensource+desktop@github.com).
+### Optional Tools
 
-### The Roadmap
+The repo is set up so that once you've got node and the repo, everything you need to do will work. However, it is
+convenient to install some tools globally in addition.
 
-GitHub Desktop recently announced its
-[1.0 release](https://github.com/blog/2437-announcing-github-desktop-1-0) and
-are working towards deprecating the classic Mac and Windows applications.
+#### Node Version Management
 
-Beyond that, we are working on a roadmap you can read [here](https://github.com/desktop/desktop/blob/master/docs/process/roadmap.md).
-The immediate milestones are more detailed, and the latter milestones are more
-fuzzy and subject to change.
+If you need multiple versions of node on your machine at the same time, consider a node version manager.
+For Mac or Linux, try [nvm](https://github.com/creationix/nvm). For Windows machines, [nodist](https://github.com/marcelklehr/nodist)
+works well.
 
-If you have ideas or suggestions please read the
-[Suggesting Enhancements](#suggesting-enhancements) section below to understand
-how to contribute your feedback.
+#### Typescript compiler and Typings
 
-## How Can I Contribute?
+The typescript compilation can be run via the `npm run build` command, but if you want the Typescript compiler available directly,
+install it on your machine by doing `npm install -g typescript`.
 
-### Reporting Bugs
+The Typings tool is useful if you're bringing in a new exteral Javascript library and want to get access to type definitions
+for that library. The typings files are checked into the repo, but if you want to download and add new ones, you'll need to
+install typings: `npm install -g typings`.
 
-This section guides you through submitting a bug report for GitHub Desktop.
-Following these guidelines helps maintainers and the community understand your
-report :pencil:, reproduce the behavior :computer: :computer:, and find related
-reports :mag_right:.
+Do _not_ run `typings install` - the typings files are already included in the repos, and this would overwrite necessary changes to the
+type declaration files.
 
-Before creating bug reports, please check [this list](#before-submitting-a-bug-report)
-as you might find out that you don't need to create one. When you are creating
-a bug report, please [include as many details as possible](#how-do-i-submit-a-good-bug-report).
-Fill out [the required template](./.github/ISSUE_TEMPLATE.md), the information
-it asks for helps us resolve issues faster.
+#### gulp
 
-#### Before Submitting A Bug Report
+gulp is used as a task runner to get everything built and in the right place. Everything is hooked up through NPM scripts, but if you
+want to save some characters at the command line, install `npm install -g gulp-cli`.
 
-**Perform a [cursory search](https://github.com/desktop/desktop/labels/bug)**
-to see if the problem has already been reported. If it does exist, add a
-:thumbsup: to the issue to indicate this is also an issue for you, and add a
-comment to the existing issue if there is extra information you can contribute.
+#### ts-node
 
-#### How Do I Submit A (Good) Bug Report?
+By default, to run the CLI you need to compile the typescript explicitly first. The `ts-node` command line tool will let you run
+`.ts` files directly from the command line. Install it with `npm install -g ts-node`.
 
-Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/).
+#### mono
 
-Simply create an issue on the [GitHub Desktop issue tracker](https://github.com/desktop/desktop/issues)
-and fill out the provided [issue template](./.github/ISSUE_TEMPLATE.md).
+If you want to regenerate the HTTP client code from a non-Windows machine, you'll need mono installed and on your path.
+see the [Mono download page](http://www.mono-project.com/download/) for downloads and installation instructions.
 
-The information we are interested in includes:
+## Troubleshooting
 
- - details about your environment - which build, which operating system
- - details about reproducing the issue - what steps to take, what happens, how
-   often it happens
- - other relevant information - log files, screenshots, etc.
+If you are running on a Mac and have to use `sudo` to install global npm modules (for example, `npm install -g typescript`),
+then please check out [this tutorial](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
 
-### Suggesting Enhancements
+# Building
 
-This section guides you through submitting an enhancement suggestion for
-GitHub Desktop, including completely new features and minor improvements to
-existing functionality. Following these guidelines helps maintainers and the
-community understand your suggestion :pencil: and find related suggestions
-:mag_right:.
+After installing node and cloning the repo, do:
 
-Before creating enhancement suggestions, please check [this list](#before-submitting-an-enhancement-suggestion)
-as you might find out that you don't need to create one. When you are creating
-an enhancement suggestion, please [include as many details as possible](#how-do-i-submit-a-good-enhancement-suggestion).
-Fill in [the template](./.github/ISSUE_TEMPLATE.md), including the steps
-that you imagine you would take if the feature you're requesting existed.
+ 1. `npm install`
+ 2. `npm run build`
 
-#### Before Submitting An Enhancement Suggestion
+To run the test suite, do:
+ 3. `npm test`
 
-**Perform a [cursory search](https://github.com/desktop/desktop/labels/enhancement)**
-to see if the enhancement has already been suggested. If it has, add a
-:thumbsup: to indicate your interest in it, or comment if there is additional
-information you would like to add.
+# Running the cli in development
 
-#### How Do I Submit A (Good) Enhancement Suggestion?
+If you're using node directly, do:
 
-Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com/features/issues/).
+ 1. `npm run build`
+ 2. `node dist/index.js <command...> <args...>`
 
-Simply create an issue on the [GitHub Desktop issue tracker](https://github.com/desktop/desktop/issues)
-and provide the following information:
+If you've installed `ts-node` as mentioned above, you can skip the build step and do:
 
-* **Use a clear and descriptive title** for the issue to identify the
-  suggestion.
-* **Provide a step-by-step description of the suggested enhancement** in as
-  much detail as possible. This additional context helps the maintainers to
-  understand the enhancement from your perspective
-* **Explain why this enhancement would be useful** to GitHub Desktop users.
-* **Include screenshots and animated GIFs** if relevant to help you demonstrate
-  the steps or point out the part of GitHub Desktop which the suggestion is
-  related to. You can use [this tool](http://www.cockos.com/licecap/) to record
-  GIFs on macOS and Windows.
-* **List some other applications where this enhancement exists, if applicable.**
+ 1. `ts-node src/index.ts <command...> <args...>`
 
-### Help Wanted
+# Scripts
 
-As part of building GitHub Desktop, we'll identify tasks that are good for
-external contributors to pick up. These tasks:
+There are a bunch of scripts in package.json file. Here's what they are and what they do:
 
- - have low impact, or have a known workaround
- - should be addressed
- - have a narrow scope and/or easy reproduction steps
- - can be worked on independent of other tasks
+| Script command | What it does |
+|----------------|------------- |
+| `npm run build` | Compiles the typescript into javascript, creates `dist` directory |
+| `npm run test` | Runs the test suite. Can also be run with `npm test` |
+| `npm run watch-test` | Runs a watcher on the test file that will rerun tests automatically on save |
+| `npm run clean` | Cleans up any compilation output |
+| `npm run autorest` | Regenerate the HTTP client libraries. Downloads required tools as part of this process |
 
-These issues will be labelled as [`help wanted`](https://github.com/desktop/desktop/labels/help%20wanted)
-in the repository. If you are interested in contributing to the project, please
-comment on the issue to let the core team (and the community) know you are
-interested in the issue.
+There will be more over time.
 
-## Additional Notes
+## Gulp targets
 
-### Issue and Pull Request Labels
+The gulpfile.js file contains the following targets that can be called manually if you desire
 
-This section lists the labels we use to help us track and manage issues and
-pull requests.
+| Target | npm script | What it does |
+|--------|------------|--------------|
+| `default` | | Runs the `build` task |
+| `autorest` | `autorest` | Regenerate client code from swagger/bifrost.swagger.json file |
+| `build` | `build` | Runs the build (build-ts, copy-assets, copy-generated-clients) |
+| `build-sourcemaps` | | Create sourcemap files for the compiled typescript to aid in debugging |
+| `build-ts-sourcemaps` | | Run Typescript compiler to output sourcemap files |
+| `build-ts` | | Runs typesscript compiler, using settings in tsconfig.json |
+| `clean`  | `clean` | Deletes the dist folder |
+| `clean-autorest` | | Deleted all generated code from src directory |
+| `clean-sourcemaps` | | Delete generated source map files from dist directory |
+| `copy-assets` | | Copies .txt files from src to dist (category descriptions) |
+| `copy-generated-client` | | Copies the generated HTTP client code to dist |
+| `prepublish` | `prepublish` | Runs the `clean` and `build` tasks before publishing to npm |
 
-#### Type of Issue and Issue State
+# Touring the codebase
 
-| Label name | :mag_right: | Description |
-| --- | --- | --- |
-| `enhancement` | [search](https://github.com/desktop/desktop/labels/enhancement) | Feature requests. |
-| `bug` | [search](https://github.com/desktop/desktop/labels/bug)  | Confirmed bugs or reports that are very likely to be bugs. |
-| `more-information-needed` | [search](https://github.com/desktop/desktop/labels/more-information-needed) | More information needs to be collected about these problems or feature requests (e.g. steps to reproduce). |
-| `needs-reproduction` | [search](https://github.com/desktop/desktop/labels/needs-reproduction)  | Likely bugs, but haven't been reliably reproduced. |
-| `stale` | [search](https://github.com/desktop/desktop/labels/stale) | Issues that are inactive and marked to be closed. |
-| `macOS` | [search](https://github.com/desktop/desktop/labels/macOS)  | Issues specific to macOS users. |
-| `Windows` | [search](https://github.com/desktop/desktop/labels/Windows)  | Issues specific to Windows users. |
-| `codemirror` | [search](https://github.com/desktop/desktop/labels/codemirror)  | Issues related to our use of [CodeMirror](https://codemirror.net/) that may require upstream fixes. |
-| `electron` | [search](https://github.com/desktop/desktop/labels/electron) | Issues related to our use of [Electron](https://electron.atom.io) that may require upstream fixes. |
+## General design principles
 
-#### Topics
+Use promises for async operations. Use `async`/`await` in Typescript for handling typical promises.
 
-| Label name | :mag_right: | Description |
-| --- | --- | --- |
-| `help wanted` | [search](https://github.com/desktop/desktop/labels/help%20wanted)  | Issues marked as ideal for external contributors. |
-| `tech-debt` | [search](https://github.com/desktop/desktop/labels/tech-debt) | Issues related to code or architecture decisions. |
-| `needs-design-input` | [search](https://github.com/desktop/desktop/labels/needs-design-input)  | Issues that require design input from the core team before the work can be started. |
+If you've got a bunch of related code, export the library as a whole in a single import using an `index.ts` file.
+For example, the `profile` library includes files `environment.ts` and `profile.ts`, but users of the module
+just needs to do `import { stuff } from "../util/profile"`
 
-#### Workflow
+Don't overuse objects or inheritance. In many cases global functions or modules can do just as well and be easier to consume.
 
-| Label name | :mag_right: | Description |
-| --- | --- | --- |
-| `ready-for-review` | [search](https://github.com/desktop/desktop/labels/ready-for-review)  | Pull Requests that are ready to be reviewed by the maintainers. |
+### Directory structure
+
+#### dist
+
+Created by the `npm run build` command, contains the compiled-to-javascript code.
+
+#### src
+
+This is where the source code for the CLI lives.
+
+#### src/commands
+
+The implementation of each command is in this directory. Each category (distribute, build, app, etc) will be a subdirectory of this directory. Each command lives in an individual source file with the same name as the command.
+
+For example:
+
+| Command | Source File |
+| ------- | ----------- |
+| `mobile-center login` | src/commands/login.ts |
+| `mobile-center profile configure` | src/commands/profile/configure.ts |
+| `mobile-center apps list` | src/commands/apps/list.ts |
+
+The command line parser and dispatcher uses the directory structure and file names to determine which code to run, so the naming conventions are important.
+
+In addition, place a `category.txt` file in your category directory. The contents of
+this file will be displayed by the help system when getting help for the category.
+
+If you have shared code across commands in your category, you can add a directory named `lib` in your category's directory and put that code there. The command line dispatcher will explicitly ignore this directory and not try to accidentally run your utility code from the command line.
+
+#### src/util
+
+This contains framework and utility code used across all the commands. See readme files in each directory for specific details of each one. (Working on these.)
+
+#### src/util/apis
+
+Http client wrappers and utility code for handling HTTP communication with Bifrost.
+
+#### src/util/apis/generated
+
+Autorest-generated client code for talking to Bifrost.
+
+#### src/util/commandline
+
+The command line parser and dispatching code, along with base class and decorators for implementing commands.
+
+#### src/util/interaction
+
+Central point for all user I/O done by commands. Use `interaction.prompt` to get input from a user, and
+`interaction.out` to output various forms of results.
+
+Commands should use these rather than directly using `console.log` because the interaction library handles output formats (the `--format` switch) and the `--quiet` switch transparently to the command author.
+
+#### src/util/profile
+
+Code for storing and retrieving information about the current logged in user.
+
+#### scripts
+
+Support files for build and packaging.
+
+#### test
+
+Test code lives here. For new tests create a subdirectory structure corresponding to the `src` folder. Test code will be automatically run if you name the file `<testname>-test.ts` or `<testname>-test.js`. We recommend using Typescript for you tests to keep things consistent across the entire codebase.
+
+#### typings
+
+Stores type definitions for the external Javascript libraries used. These are checked in rather than dynamically downloaded in case we need to edit them.
+
+# Naming conventions
+To get consistent user experience among commands for all beacons, the command line argument names should follow the following conventions.
+
+1. **All argument names**: lower-case nouns, separated by dash "-".
+
+   Examples:
+   - `--app-path`
+   - `--dsym-dir`
+   - `--debug`
+
+1. **Arguments that describe application**: the first noun is "app".
+
+   Examples:
+   - `--app`
+   - `--app-path`
+
+1. **Arguments that point to directories**: the last noun is "dir".
+
+   Examples:
+   - `--tests-dir`
+   - `--build-dir`
+   - `--dsym-dir`
+
+1. **Arguments that point to a single file**: the last noun is "path".
+
+   Examples:
+   - `--manifest-path`
+   - `--app-path`
+
+# Development Processes
+
+We follow the standard GitHub flow. Each person working on the cli should create their own fork of the repo. Work in your own repo (preferably on a feature branch). When ready, send a pull request to the master Microsoft/MobileCenter-cli repo against the master branch. After review, the pull request will be merged.
+
+Issue tracking will be done on [VSO](https://mseng.visualstudio.com/Mobile%20Center/Command%20Line%20Interface/).
+
+# Building Installers
+
+TBD. We'll need builds for a Mac installer, Windows MSI, and at least one format of Linux package, plus be able to push to NPM.
+
