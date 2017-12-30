@@ -1,0 +1,12 @@
+$ git log origin/master..HEAD
+
+commit 99b4ce4d59e79cb379987b39c65f7113631f0635
+Merge: 16ba8ca adc6571
+Author: Daniel Woelfel <daniel@circleci.com>
+Date:   Tue Apr 25 15:56:42 2016 -0800
+
+    A quite big new feature
+
+    Fix bug in feature
+    Refactor feature code
+    First attempt at feature [ci skip]
